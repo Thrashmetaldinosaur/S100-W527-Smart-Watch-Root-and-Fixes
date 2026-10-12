@@ -1,0 +1,6 @@
+id=s100_bottom_double_home
+name=S100 W527 Bottom Double Press Watch Face
+version=0.1-final-mapping
+versionCode=1
+author=S100 Community
+description=Keep native POWER single sleep/long menu/wake; double HOME then BACK opens CloX face.
