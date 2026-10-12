@@ -39,6 +39,27 @@ Make a **previously working Magisk recovery** the default boot choice by writing
 
 The permanent-root notes previously lived under [`automatic-magisk-root/`](automatic-magisk-root/README.md). That older path remains as a compatibility link; the numbered path **03-root-permanence** is now canonical.
 
-### Planned additions
+## 4. [Button controls — working](04-button-controls/README.md)
 
-Button customization, UI/rounded-screen corrections, and other device fixes will be documented separately from the initial three-stage installation path.
+**Status: confirmed after reboot.** Top key: Back / portrait ↔ 90° / volume panel. Bottom key: single sleep, double **CloX watch face**, long power menu, press asleep wakes. The final bottom fix is a passive Magisk KEY_POWER listener; **the previous LSPosed experiment was discarded**. Final scripts and module service files are included; they were reconstructed from the verified test ZIPs and exact applied patches, not freshly copied from the watch.
+
+## 5. [Round-display and CloX fixes — working](05-display/README.md)
+
+**Status: confirmed and persistent after reboot.** Two fabricated SystemUI overlays change status-bar start/end padding from **8 dp to 64 dp**, preventing clock and status icons from falling behind the physical round corners. CloX's portrait-orientation constraint was separately changed to enable the 480×480 square viewport; Boosted Colors was disabled for natural color.
+
+## 6. [Google Play services and Store — working](06-google-play/README.md)
+
+**Status: Google Play confirmed by the owner.** Android 13 ARM64 LiteGapps (July 9, 2026) was installed after confirming the vanilla GSI lacked GMS, GSF and Play Store. This does **not** establish Wallet, Play Protect certification or all Google sync features.
+
+---
+
+### Outstanding checks
+
+- Other apps can still clip at round edges; the tested padding fix targets **SystemUI status bar only**.
+- Play certification, Wallet and full background/sync behavior have not been verified.
+- S13 features such as YouTube square-screen fixes, wrist-to-wake and performance adjustments are candidates for evaluation, **not confirmed S100 fixes**.
+- The original Android 13 GSI download, vendor-preparation script and full recovery-signing instructions are not all present; the initial installation/root stages remain advanced device-specific notes.
+
+### Publishing policy
+
+Only publish fixes **after they work on the S100**. Provisional trials (including the unsuccessful experimental power-key LSPosed code) are not the released implementation. No Google apps, proprietary CloX APKs, firmware images or signing keys are redistributed.
