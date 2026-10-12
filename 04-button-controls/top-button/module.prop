@@ -1,0 +1,6 @@
+id=s100_top_buttons
+name=S100 W527 Top Button (Back Rotate Volume)
+version=0.2-final-mapping
+versionCode=2
+author=S100 Community
+description=Single Back; double portrait/90 clockwise toggle; hold volume panel. Tested S100 W527.
