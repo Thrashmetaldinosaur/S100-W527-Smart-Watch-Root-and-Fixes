@@ -41,7 +41,7 @@ The permanent-root notes previously lived under [`automatic-magisk-root/`](autom
 
 ## 4. [Button controls — working](04-button-controls/README.md)
 
-**Status: confirmed after reboot.** Top key: Back / portrait ↔ 90° / volume panel. Bottom key: single sleep, double **CloX watch face**, long power menu, press asleep wakes. The final bottom fix is a passive Magisk KEY_POWER listener; **the previous LSPosed experiment was discarded**. Final scripts and module service files are included; they were reconstructed from the verified test ZIPs and exact applied patches, not freshly copied from the watch.
+**Status: confirmed after reboot.** Top-key handler **v0.3** resolves intermittent missed BACK presses while retaining double-press portrait ↔ 90° rotation and long-press volume panel.  Bottom key: single sleep, double **CloX watch face**, long power menu, press asleep wakes. The final bottom fix is a passive Magisk KEY_POWER listener; **the previous LSPosed experiment was discarded**. Final script sources and module service files are included; earlier files were reconstructed from tested patches, while the top-key v0.3 source was preserved from the successfully installed test script.
 
 ## 5. [Round-display and CloX fixes — working](05-display/README.md)
 

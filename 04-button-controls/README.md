@@ -9,7 +9,9 @@
 
 **Use the final version of each handler:** [Top button](top-button/README.md) / [Bottom button](bottom-button/README.md).
 
-The original module ZIPs used during experiments did **not** always install all their files. This repo provides the **final handler source + Magisk service files**, rather than claiming that the old test ZIPs are finished installers. Files here reconstruct the precise text edits used on the working watch; they are **not byte-level on-device readbacks**.
+**Top button:** v0.3 fixes intermittently missed single BACK presses by removing the earlier asynchronous 40 ms press-validation race. After reboot, the owner confirmed single BACK, double-press rotation and long-press volume all work. The prior v0.2 source is retained under the top-button folder for rollback. The bottom-power-button handler is unchanged.
+
+The original module ZIPs used during experiments did **not** always install all their files. This repo provides the **final handler source + Magisk service files**, rather than claiming that the old test ZIPs are finished installers. Most earlier files were reconstructed from saved edits; the published top-button v0.3 source matches the script installed for the owner's successful hardware test.
 
 **Compatibility:** Confirm `getevent -lp /dev/input/event6` contains both `KEY_F9` and `KEY_POWER` before installing. Other S100 variants may differ. The handlers depend on root, `getevent`, `input`, shell and the Android 13 command interfaces used on the tested GSI. They are not universal wearable fixes.
 
