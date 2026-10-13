@@ -1,0 +1,57 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:2:1-12:12
+INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:2:1-12:12
+INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:2:1-12:12
+INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:2:1-12:12
+	package
+		INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml
+	android:versionCode
+		INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:2:11-69
+application
+ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:3:5-11:19
+INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:3:5-11:19
+	android:extractNativeLibs
+		INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml
+	android:label
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:6:9-52
+	android:hasCode
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:5:9-31
+	android:allowBackup
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:4:9-36
+meta-data#xposedmodule
+ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:7:9-71
+	android:value
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:7:48-68
+	android:name
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:7:20-47
+meta-data#xposeddescription
+ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:8:9-148
+	android:value
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:8:53-145
+	android:name
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:8:20-52
+meta-data#xposedminversion
+ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:9:9-73
+	android:value
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:9:52-70
+	android:name
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:9:20-51
+meta-data#xposedscope
+ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:10:9-88
+	android:resource
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:10:47-85
+	android:name
+		ADDED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:10:20-46
+uses-sdk
+INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml
+INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml

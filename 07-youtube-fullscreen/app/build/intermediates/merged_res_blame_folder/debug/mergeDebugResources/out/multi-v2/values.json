@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.s100.youtubefullscreen.app-mergeDebugResources-2:/values/values.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\zvigs\\Downloads\\S100-YouTube-Fullscreen-Fix-v1.0\\app\\src\\main\\res\\values\\arrays.xml",
+                    "from": {
+                        "startLines": "1",
+                        "startColumns": "11",
+                        "startOffsets": "50",
+                        "endColumns": "99",
+                        "endOffsets": "138"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "92",
+                        "endOffsets": "143"
+                    }
+                }
+            ]
+        }
+    ]
+}

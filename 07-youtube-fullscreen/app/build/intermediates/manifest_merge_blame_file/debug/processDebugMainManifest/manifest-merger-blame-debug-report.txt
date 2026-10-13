@@ -1,0 +1,47 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.s100.youtubefullscreen"
+4    android:versionCode="20"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="32" />
+10
+11    <application
+11-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:3:5-11:19
+12        android:allowBackup="false"
+12-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:4:9-36
+13        android:debuggable="true"
+14        android:extractNativeLibs="false"
+15        android:hasCode="true"
+15-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:5:9-31
+16        android:label="S100 YouTube Fullscreen Fix" >
+16-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:6:9-52
+17        <meta-data
+17-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:7:9-71
+18            android:name="xposedmodule"
+18-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:7:20-47
+19            android:value="true" />
+19-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:7:48-68
+20        <meta-data
+20-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:8:9-148
+21            android:name="xposeddescription"
+21-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:8:20-52
+22            android:value="S100 W527 fullscreen with subtitles and playback controls; YouTube 21.40.161" />
+22-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:8:53-145
+23        <meta-data
+23-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:9:9-73
+24            android:name="xposedminversion"
+24-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:9:20-51
+25            android:value="93" />
+25-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:9:52-70
+26        <meta-data
+26-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:10:9-88
+27            android:name="xposedscope"
+27-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:10:20-46
+28            android:resource="@array/xposed_scope" />
+28-->C:\Users\zvigs\Downloads\S100-YouTube-Fullscreen-Fix-v1.0\app\src\main\AndroidManifest.xml:10:47-85
+29    </application>
+30
+31</manifest>
