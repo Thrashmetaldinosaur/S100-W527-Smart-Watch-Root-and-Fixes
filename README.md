@@ -63,3 +63,7 @@ The permanent-root notes previously lived under [`automatic-magisk-root/`](autom
 ### Publishing policy
 
 Only publish fixes **after they work on the S100**. Provisional trials (including the unsuccessful experimental power-key LSPosed code) are not the released implementation. No Google apps, proprietary CloX APKs, firmware images or signing keys are redistributed.
+
+## YouTube fullscreen on the S100 (Android 13)
+
+See [07-youtube-fullscreen](07-youtube-fullscreen/README.md) for the watch-tested LSPosed YouTube Fullscreen Fix v1.0: centered 16:9 playback, subtitles in the lower letterbox band, draggable seek bar, auto-hiding controls, and restored mini-player behavior. Scoped to official YouTube 21.40.161 only.
