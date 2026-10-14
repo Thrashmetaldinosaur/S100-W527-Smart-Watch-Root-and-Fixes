@@ -1,6 +1,7 @@
 package com.s100.cameraflip;
 
 import android.app.Activity;
+import android.app.Instrumentation;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -21,9 +22,10 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 /**
- * Test build specifically for S100 Android 13 stock Camera2.apk.
- * PhotoModule.capture calls CameraProxy.setJpegOrientation(int) before shutter.
- * CameraAppUI.mTextureView is the preview surface.
+ * S100 stock camera v1.1-test2. Injected only into com.android.camera2.
+ * The stock camera's mCurrentModule is not guaranteed to be ready when an
+ * activity resumes. The toggle is therefore attached unconditionally to
+ * activity_root_view, rather than gated on PhotoModule detection.
  */
 public final class CameraFlipHook implements IXposedHookLoadPackage {
     private static final String TARGET = "com.android.camera2";
@@ -37,25 +39,68 @@ public final class CameraFlipHook implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam param) {
         if (!TARGET.equals(param.packageName)) return;
-        try {
-            Class<?> activity = XposedHelpers.findClass("com.android.camera.CameraActivity", param.classLoader);
-            Class<?> photo = XposedHelpers.findClass("com.android.camera.PhotoModule", param.classLoader);
-            Class<?> proxy = XposedHelpers.findClass("com.android.ex.camera2.portability.CameraAgent$CameraProxy", param.classLoader);
 
-            XposedHelpers.findAndHookMethod(activity, "onResumeTasks", new XC_MethodHook() {
+        // Instrumentation is the reliable framework dispatch point even if the
+        // actual CameraLauncher activity inherits its onResume() method.
+        try {
+            XposedHelpers.findAndHookMethod(Instrumentation.class,
+                    "callActivityOnResume", Activity.class, new XC_MethodHook() {
                 @Override protected void afterHookedMethod(MethodHookParam p) {
-                    refreshAsync((Activity) p.thisObject);
+                    Activity a = (Activity) p.args[0];
+                    if (!TARGET.equals(a.getPackageName())) return;
+                    log("Activity resumed: " + a.getClass().getName());
+                    scheduleRefresh(a, "instrumentation resume");
                 }
             });
-            XposedHelpers.findAndHookMethod(photo, "onPreviewStarted", new XC_MethodHook() {
+            log("Instrumentation resume hook installed");
+        } catch (Throwable e) {
+            log("Instrumentation hook FAILED: " + e);
+        }
+
+        // Additional retry points if the activity layout/preview initializes
+        // after the standard onResume lifecycle callback.
+        try {
+            Class<?> activity = XposedHelpers.findClass(
+                    "com.android.camera.CameraActivity", param.classLoader);
+            XposedHelpers.findAndHookMethod(activity, "onResumeTasks",
+                    new XC_MethodHook() {
                 @Override protected void afterHookedMethod(MethodHookParam p) {
+                    log("CameraActivity.onResumeTasks fired");
+                    scheduleRefresh((Activity) p.thisObject, "onResumeTasks");
+                }
+            });
+            log("CameraActivity.onResumeTasks hook installed");
+        } catch (Throwable e) {
+            log("Optional onResumeTasks hook FAILED: " + e);
+        }
+
+        try {
+            Class<?> photo = XposedHelpers.findClass(
+                    "com.android.camera.PhotoModule", param.classLoader);
+            XposedHelpers.findAndHookMethod(photo, "onPreviewStarted",
+                    new XC_MethodHook() {
+                @Override protected void afterHookedMethod(MethodHookParam p) {
+                    log("PhotoModule.onPreviewStarted fired");
                     try {
-                        Activity a = (Activity) XposedHelpers.getObjectField(p.thisObject, "mActivity");
-                        refreshAsync(a);
-                    } catch (Throwable err) { log("onPreviewStarted: " + err); }
+                        Activity a = (Activity) XposedHelpers.getObjectField(
+                                p.thisObject, "mActivity");
+                        scheduleRefresh(a, "preview started");
+                    } catch (Throwable e) {
+                        log("Preview retry FAILED: " + e);
+                    }
                 }
             });
-            XposedHelpers.findAndHookMethod(proxy, "setJpegOrientation", int.class, new XC_MethodHook() {
+            log("PhotoModule.onPreviewStarted hook installed");
+        } catch (Throwable e) {
+            log("Optional preview hook FAILED: " + e);
+        }
+
+        try {
+            Class<?> proxy = XposedHelpers.findClass(
+                    "com.android.ex.camera2.portability.CameraAgent$CameraProxy",
+                    param.classLoader);
+            XposedHelpers.findAndHookMethod(proxy, "setJpegOrientation", int.class,
+                    new XC_MethodHook() {
                 @Override protected void beforeHookedMethod(MethodHookParam p) {
                     if (!flip) return;
                     int original = (Integer) p.args[0];
@@ -63,42 +108,56 @@ public final class CameraFlipHook implements IXposedHookLoadPackage {
                     log("JPEG orientation " + original + " -> " + p.args[0]);
                 }
             });
-            log("Hooks loaded for com.android.camera2");
-        } catch (Throwable err) { log("Hook setup FAILED: " + err); }
+            log("JPEG orientation hook installed");
+        } catch (Throwable e) {
+            log("JPEG hook FAILED: " + e);
+        }
+
+        log("v1.1 hooks setup completed for " + param.processName);
     }
 
-    private static void refreshAsync(Activity a) {
-        if (a == null) return;
+    private static void scheduleRefresh(Activity a, String reason) {
+        if (a == null || a.isFinishing() || a.isDestroyed()) return;
         a.runOnUiThread(() -> {
-            if (a.isFinishing() || a.isDestroyed()) return;
-            Activity previous = active.get();
-            if (previous != a) {
-                active = new WeakReference<>(a);
-                SharedPreferences prefs = a.getSharedPreferences(PREF, Context.MODE_PRIVATE);
-                flip = prefs.getBoolean(KEY_FLIP, false);
-            }
             try {
-                boolean photoMode = isPhotoMode(a);
-                TextView button = findButton(a);
-                if (!photoMode) {
-                    if (button != null) button.setVisibility(View.GONE);
-                    rotatePreview(a, false);
+                View decor = a.getWindow().getDecorView();
+                if (decor == null) {
+                    log("No decor view yet (" + reason + ")");
                     return;
                 }
-                if (button == null) button = installButton(a);
-                if (button != null) {
-                    button.setVisibility(View.VISIBLE);
-                    paintButton(button);
-                }
-                rotatePreview(a, flip);
-            } catch (Throwable err) { log("UI refresh error: " + err); }
+                decor.postDelayed(() -> refresh(a, reason), 200);
+            } catch (Throwable e) {
+                log("scheduleRefresh FAILED (" + reason + "): " + e);
+            }
         });
     }
 
-    private static boolean isPhotoMode(Activity a) {
-        Object current = XposedHelpers.getObjectField(a, "mCurrentModule");
-        if (current == null) return false;
-        return "com.android.camera.PhotoModule".equals(current.getClass().getName());
+    private static void refresh(Activity a, String reason) {
+        if (a == null || a.isFinishing() || a.isDestroyed()) return;
+        try {
+            Activity previous = active.get();
+            if (previous != a) {
+                active = new WeakReference<>(a);
+                SharedPreferences prefs = a.getSharedPreferences(
+                        PREF, Context.MODE_PRIVATE);
+                flip = prefs.getBoolean(KEY_FLIP, false);
+                log("Preferences loaded: flip=" + flip);
+            }
+            TextView button = findButton(a);
+            if (button == null) button = installButton(a);
+            if (button != null) {
+                button.setVisibility(View.VISIBLE);
+                paintButton(button);
+                button.bringToFront();
+                log("Button visible (" + reason + "), parent="
+                        + button.getParent().getClass().getSimpleName());
+            } else {
+                log("Button not attached (" + reason + ")");
+            }
+            rotatePreview(a, flip);
+        } catch (Throwable e) {
+            log("UI refresh FAILED (" + reason + "): " + e);
+        }
     }
 
     private static TextView findButton(Activity a) {
@@ -106,36 +165,62 @@ public final class CameraFlipHook implements IXposedHookLoadPackage {
         return found instanceof TextView ? (TextView) found : null;
     }
 
-    private static TextView installButton(Activity a) {
+    private static FrameLayout chooseRoot(Activity a) {
+        int id = a.getResources().getIdentifier(
+                "activity_root_view", "id", TARGET);
+        View found = id != 0 ? a.findViewById(id) : null;
+        if (found instanceof FrameLayout) return (FrameLayout) found;
+        View content = a.findViewById(android.R.id.content);
+        if (content instanceof FrameLayout) {
+            log("Using android.R.id.content fallback");
+            return (FrameLayout) content;
+        }
         View decor = a.getWindow().getDecorView();
-        if (!(decor instanceof ViewGroup)) return null;
+        if (decor instanceof FrameLayout) {
+            log("Using decor FrameLayout fallback");
+            return (FrameLayout) decor;
+        }
+        log("No FrameLayout root available");
+        return null;
+    }
+
+    private static TextView installButton(Activity a) {
+        FrameLayout root = chooseRoot(a);
+        if (root == null) return null;
         TextView button = new TextView(a);
         button.setId(BUTTON_ID);
         button.setTextSize(13);
         button.setGravity(Gravity.CENTER);
         button.setSingleLine(true);
         button.setTextColor(Color.WHITE);
-        button.setElevation(dp(a, 8));
+        button.setClickable(true);
+        button.setFocusable(true);
+        button.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+        button.setElevation(dp(a, 16));
         button.setPadding(dp(a, 10), dp(a, 8), dp(a, 10), dp(a, 8));
-        button.setContentDescription("Toggle 180 degree selfie camera rotation");
+        button.setContentDescription("Toggle 180 degree camera rotation");
         button.setOnClickListener(v -> {
             flip = !flip;
-            a.getSharedPreferences(PREF, Context.MODE_PRIVATE).edit().putBoolean(KEY_FLIP, flip).apply();
+            a.getSharedPreferences(PREF, Context.MODE_PRIVATE)
+                    .edit().putBoolean(KEY_FLIP, flip).apply();
             paintButton(button);
             rotatePreview(a, flip);
-            log("Selfie mode " + (flip ? "ON" : "OFF"));
+            log("Toggle clicked, flip=" + flip);
         });
+
+        // Top left avoids stock Options at x=266..352 and Shutter at
+        // x=366..480 in the confirmed 480x480 camera layout.
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.TOP | Gravity.END);
-        lp.topMargin = dp(a, 22);
-        lp.rightMargin = dp(a, 16);
-        if (decor instanceof FrameLayout) {
-            ((FrameLayout) decor).addView(button, lp);
-        } else {
-            ((ViewGroup) decor).addView(button, new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        }
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.TOP | Gravity.START);
+        lp.topMargin = dp(a, 12);
+        lp.leftMargin = dp(a, 12);
+        paintButton(button);
+        root.addView(button, lp);
+        button.bringToFront();
+        log("Button ATTACHED to " + root.getClass().getName()
+                + " at root id=" + root.getId());
         return button;
     }
 
@@ -151,16 +236,27 @@ public final class CameraFlipHook implements IXposedHookLoadPackage {
     private static void rotatePreview(Activity a, boolean enabled) {
         try {
             Object appUI = XposedHelpers.getObjectField(a, "mCameraAppUI");
-            if (appUI == null) return;
+            if (appUI == null) {
+                log("CameraAppUI not ready");
+                return;
+            }
             Object view = XposedHelpers.getObjectField(appUI, "mTextureView");
             if (view instanceof TextureView) {
                 ((TextureView) view).setRotation(enabled ? 180f : 0f);
-            } else { log("No TextureView found in CameraAppUI"); }
-        } catch (Throwable e) { log("Preview rotation failed: " + e); }
+                log("Preview rotation applied: " + (enabled ? 180 : 0));
+            } else {
+                log("Preview TextureView not available: " + view);
+            }
+        } catch (Throwable e) {
+            log("Preview rotation FAILED: " + e);
+        }
     }
 
     private static int dp(Context context, int value) {
         return Math.round(context.getResources().getDisplayMetrics().density * value);
     }
-    private static void log(String line) { XposedBridge.log(TAG + ": " + line); }
+
+    private static void log(String msg) {
+        XposedBridge.log(TAG + ": " + msg);
+    }
 }
