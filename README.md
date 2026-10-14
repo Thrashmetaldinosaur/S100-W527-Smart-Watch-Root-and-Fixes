@@ -67,3 +67,7 @@ Only publish fixes **after they work on the S100**. Provisional trials (includin
 ## YouTube fullscreen on the S100 (Android 13)
 
 See [07-youtube-fullscreen](07-youtube-fullscreen/README.md) for the watch-tested LSPosed YouTube Fullscreen Fix v1.0: centered 16:9 playback, subtitles in the lower letterbox band, draggable seek bar, auto-hiding controls, and restored mini-player behavior. Scoped to official YouTube 21.40.161 only.
+
+## 8. [LTE cellular startup with recovery-root — working](08-lte-cellular/README.md)
+
+**Status: verified after reboot.** Magisk v1.1 automatically starts the S100 cellular processor, recognizes the physical SIM (`LOADED`), and restores the original modem controller with service running. The source-only module builder and the checked on-device one-byte patch generator are published; this generic installer path has not yet been independently tested on another watch. **Carrier registration and mobile data remain unverified.**
