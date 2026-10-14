@@ -20,7 +20,12 @@ jobs:
       - name: Ensure Android SDK 35
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
-          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          ls "$ANDROID_HOME/platforms" || true
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager 2>/dev/null | head -n 1)
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ]; then
+            test -n "$SDKMANAGER" || { echo 'No sdkmanager found'; exit 1; }
+            "$SDKMANAGER" 'platforms;android-35' 'build-tools;35.0.0'
+          fi
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
