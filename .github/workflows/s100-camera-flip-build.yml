@@ -44,6 +44,6 @@ jobs:
         run: gradle :app:assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
         with:
-          name: S100-Camera-Flip-Fix-v1.0-test1
+          name: S100-Camera-Flip-Fix-v1.1-test2
           path: camera-flip/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
