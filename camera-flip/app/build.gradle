@@ -1,0 +1,18 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.s100.cameraflip'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.s100.cameraflip'
+        minSdk 26
+        targetSdk 28
+        versionCode 2
+        versionName '1.1-test2'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildTypes { release { minifyEnabled false }; debug { minifyEnabled false } }
+}
+dependencies { compileOnly files('libs/api-82.jar') }
