@@ -1,0 +1,49 @@
+name: Build S100 Camera Flip APK
+on:
+  push:
+    branches: [s100-camera-flip-v1]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Ensure Android SDK 35
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls "$ANDROID_HOME/platforms" || true
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager 2>/dev/null | head -n 1)
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ]; then
+            test -n "$SDKMANAGER" || { echo 'No sdkmanager found'; exit 1; }
+            "$SDKMANAGER" 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Obtain compile-only Xposed API 82
+        run: |
+          mkdir -p camera-flip/app/libs
+          curl -fLsS --retry 3 --retry-delay 2 \
+            'https://repository-cdn.liferay.com/nexus/content/repositories/gradle-plugins/de/robv/android/xposed/api/82/api-82.jar' \
+            -o camera-flip/app/libs/api-82.jar || \
+          curl -fLsS --retry 3 --retry-delay 2 \
+            'https://maven.aliyun.com/repository/public/de/robv/android/xposed/api/82/api-82.jar' \
+            -o camera-flip/app/libs/api-82.jar
+          unzip -t camera-flip/app/libs/api-82.jar
+      - name: Build camera flip debug APK
+        working-directory: camera-flip
+        run: gradle :app:assembleDebug --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: S100-Camera-Flip-Fix-v1.1-test2
+          path: camera-flip/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
